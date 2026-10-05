@@ -40,7 +40,7 @@
     <section class="card" aria-labelledby="form-heading">
       <h2 id="form-heading" class="card__title">Add transaction</h2>
 
-      <form id="transaction-form" class="transaction-form">
+      <form id="transaction-form" class="transaction-form" novalidate>
 
         <div class="form-group">
           <label for="transaction-type">Type</label>
@@ -48,19 +48,18 @@
             <option value="expense">Expense</option>
             <option value="income">Income</option>
           </select>
-          <small class="error-message" id="type-error"></small>
         </div>
 
         <div class="form-group">
           <label for="transaction-amount">Amount</label>
-          <input type="number" id="transaction-amount" name="amount"
+          <input type="number" id="transaction-amount" name="amount" aria-describedby="amount-error"
                  placeholder="0.00" min="0" step="0.01">
           <small class="error-message" id="amount-error"></small>
         </div>
 
         <div class="form-group">
           <label for="transaction-category">Category</label>
-          <select id="transaction-category" name="category">
+          <select id="transaction-category" name="category" aria-describedby="category-error">
             <option value="">Select a category</option>
             <option value="salary">Salary</option>
             <option value="food">Food</option>
@@ -76,13 +75,13 @@
 
         <div class="form-group">
           <label for="transaction-date">Date</label>
-          <input type="date" id="transaction-date" name="date">
+          <input type="date" id="transaction-date" name="date" aria-describedby="date-error">
           <small class="error-message" id="date-error"></small>
         </div>
 
         <div class="form-group form-group--wide">
           <label for="transaction-description">Description</label>
-          <input type="text" id="transaction-description" name="description"
+          <input type="text" id="transaction-description" name="description" aria-describedby="description-error"
                  placeholder="e.g. Groceries" maxlength="60">
           <small class="error-message" id="description-error"></small>
         </div>

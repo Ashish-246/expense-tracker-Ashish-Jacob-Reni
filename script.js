@@ -8,12 +8,37 @@ const descriptionInput = document.getElementById("transaction-description");
 const submitButton = document.getElementById("submit-button");
 const cancelEditButton = document.getElementById("cancel-edit-button");
 
+const filterTypeSelect = document.getElementById("filter-type");
+const filterCategorySelect = document.getElementById("filter-category");
+const resetFiltersButton = document.getElementById("reset-filters-button");
+
 const transactionList = document.getElementById("transaction-list");
 const emptyMessage = document.getElementById("empty-message");
 
 const totalIncomeElement = document.getElementById("total-income");
 const totalExpensesElement = document.getElementById("total-expenses");
 const balanceElement = document.getElementById("balance");
+
+const fields = {
+  amount: {
+    input: amountInput,
+    error: document.getElementById("amount-error"),
+  },
+  category: {
+    input: categoryInput,
+    error: document.getElementById("category-error"),
+  },
+  date: {
+    input: dateInput,
+    error: document.getElementById("date-error"),
+  },
+  description: {
+    input: descriptionInput,
+    error: document.getElementById("description-error"),
+  },
+};
+
+const STORAGE_KEY = "expense-tracker-transactions";
 
 let transactions = [];
 let editingTransactionId = null;
@@ -51,6 +76,20 @@ function getTodayDate() {
   return `${year}-${month}-${day}`;
 }
 
+function loadTransactions() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const parsed = saved ? JSON.parse(saved) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveTransactions() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+}
+
 function calculateTotals() {
   let totalIncome = 0;
   let totalExpenses = 0;
@@ -68,6 +107,61 @@ function calculateTotals() {
     totalExpenses,
     balance: totalIncome - totalExpenses,
   };
+}
+
+function getFilteredTransactions() {
+  const selectedType = filterTypeSelect.value;
+  const selectedCategory = filterCategorySelect.value;
+
+  return transactions.filter(function (transaction) {
+    const matchesType =
+      selectedType === "all" || transaction.type === selectedType;
+    const matchesCategory =
+      selectedCategory === "all" || transaction.category === selectedCategory;
+
+    return matchesType && matchesCategory;
+  });
+}
+
+function validateTransaction(transaction) {
+  const errors = {};
+
+  if (!(transaction.amount > 0)) {
+    errors.amount = "Enter an amount greater than 0.";
+  } else if (Number(transaction.amount.toFixed(2)) !== transaction.amount) {
+    errors.amount = "Use no more than 2 decimal places.";
+  }
+
+  if (!transaction.category) {
+    errors.category = "Select a category.";
+  }
+
+  if (!transaction.date) {
+    errors.date = "Choose a date.";
+  }
+
+  if (!transaction.description) {
+    errors.description = "Enter a description.";
+  }
+
+  return errors;
+}
+
+function setFieldError(name, message) {
+  const field = fields[name];
+  field.error.textContent = message;
+
+  if (message) {
+    field.input.setAttribute("aria-invalid", "true");
+  } else {
+    field.input.removeAttribute("aria-invalid");
+  }
+}
+
+function showErrors(errors) {
+  Object.keys(fields).forEach(function (name) {
+    setFieldError(name, errors[name] || "");
+  });
 }
 
 function createTransactionElement(transaction) {
@@ -124,10 +218,16 @@ function createTransactionElement(transaction) {
 }
 
 function renderTransactions() {
-  transactionList.innerHTML = "";
-  emptyMessage.hidden = transactions.length > 0;
+  const visibleTransactions = getFilteredTransactions();
 
-  transactions.forEach(function (transaction) {
+  transactionList.innerHTML = "";
+  emptyMessage.hidden = visibleTransactions.length > 0;
+  emptyMessage.textContent =
+    transactions.length === 0
+      ? "No transactions yet. Add your first one above."
+      : "No transactions match your filters.";
+
+  visibleTransactions.forEach(function (transaction) {
     transactionList.appendChild(createTransactionElement(transaction));
   });
 }
@@ -145,9 +245,16 @@ function render() {
   renderSummary();
 }
 
+function resetFilters() {
+  filterTypeSelect.value = "all";
+  filterCategorySelect.value = "all";
+  renderTransactions();
+}
+
 function resetForm() {
   transactionForm.reset();
   dateInput.value = getTodayDate();
+  showErrors({});
 
   editingTransactionId = null;
   formHeading.textContent = "Add transaction";
@@ -167,6 +274,7 @@ function startEditing(id) {
   }
 
   editingTransactionId = id;
+  showErrors({});
 
   typeInput.value = transaction.type;
   amountInput.value = transaction.amount;
@@ -197,12 +305,12 @@ function handleFormSubmit(event) {
     description: descriptionInput.value.trim(),
   };
 
-  if (
-    formTransaction.amount <= 0 ||
-    !formTransaction.category ||
-    !formTransaction.date ||
-    !formTransaction.description
-  ) {
+  const errors = validateTransaction(formTransaction);
+  showErrors(errors);
+
+  const invalidFields = Object.keys(errors);
+  if (invalidFields.length > 0) {
+    fields[invalidFields[0]].input.focus();
     return;
   }
 
@@ -216,6 +324,7 @@ function handleFormSubmit(event) {
     transactions.unshift(formTransaction);
   }
 
+  saveTransactions();
   render();
   resetForm();
 }
@@ -234,6 +343,7 @@ function deleteTransaction(id) {
     resetForm();
   }
 
+  saveTransactions();
   render();
 }
 
@@ -254,11 +364,22 @@ function handleTransactionListClick(event) {
 }
 
 function init() {
+  transactions = loadTransactions();
   dateInput.value = getTodayDate();
 
   transactionForm.addEventListener("submit", handleFormSubmit);
   cancelEditButton.addEventListener("click", resetForm);
   transactionList.addEventListener("click", handleTransactionListClick);
+
+  filterTypeSelect.addEventListener("change", renderTransactions);
+  filterCategorySelect.addEventListener("change", renderTransactions);
+  resetFiltersButton.addEventListener("click", resetFilters);
+
+  Object.keys(fields).forEach(function (name) {
+    fields[name].input.addEventListener("input", function () {
+      setFieldError(name, "");
+    });
+  });
 
   render();
 }

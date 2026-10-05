@@ -221,6 +221,11 @@ button:focus-visible {
   display: none;
 }
 
+input[aria-invalid="true"],
+select[aria-invalid="true"] {
+  border-color: var(--color-expense);
+}
+
 /* Buttons */
 .btn {
   padding: 0.65rem 1.25rem;
