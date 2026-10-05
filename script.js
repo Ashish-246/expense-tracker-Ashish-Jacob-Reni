@@ -1,32 +1,20 @@
 
 //  Select the DOM elements we need
+const transactionForm = document.getElementById("transaction-form");
+const typeInput = document.getElementById("transaction-type");
+const amountInput = document.getElementById("transaction-amount");
+const categoryInput = document.getElementById("transaction-category");
+const dateInput = document.getElementById("transaction-date");
+const descriptionInput = document.getElementById("transaction-description");
+ 
 const transactionList = document.getElementById("transaction-list");
 const emptyMessage = document.getElementById("empty-message");
-const dateInput = document.getElementById("transaction-date");
-
 
 //  Data
 
 // Temporary sample data so we can practice rendering.
 // Each transaction is an object, and the list of them is an array.
-const transactions = [
-  {
-    id: 1,
-    type: "expense",
-    amount: 45.5,
-    category: "food",
-    date: "2026-10-03",
-    description: "Groceries",
-  },
-  {
-    id: 2,
-    type: "income",
-    amount: 2500,
-    category: "salary",
-    date: "2026-10-01",
-    description: "October salary",
-  },
-];
+const transactions = [];
 
 // Helper functions
 
@@ -135,6 +123,44 @@ function renderTransactions() {
   });
 }
 
+// Clears the form and gets it ready for the next entry
+function resetForm() {
+  transactionForm.reset();
+  dateInput.value = getTodayDate();
+  amountInput.focus();
+}
+ 
+// Runs when the user submits the form
+function handleFormSubmit(event) {
+  // Stop the browser from reloading the page
+  event.preventDefault();
+ 
+  // Read the values from the form and build a transaction object
+  const newTransaction = {
+    id: Date.now(),
+    type: typeInput.value,
+    amount: Number(amountInput.value),
+    category: categoryInput.value,
+    date: dateInput.value,
+    description: descriptionInput.value.trim(),
+  };
+ 
+  // Temporary safety check
+  if (
+    newTransaction.amount <= 0 ||
+    !newTransaction.category ||
+    !newTransaction.date ||
+    !newTransaction.description
+  ) {
+    return;
+  }
+ 
+  // Add to the START of the array so the newest appears first
+  transactions.unshift(newTransaction);
+ 
+  renderTransactions();
+  resetForm();
+}
 
 //  Start the app
 
