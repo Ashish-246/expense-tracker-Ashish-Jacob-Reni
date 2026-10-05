@@ -308,6 +308,7 @@ select[aria-invalid="true"] {
 
 .transaction-item__description {
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .transaction-item__meta {
@@ -318,6 +319,7 @@ select[aria-invalid="true"] {
 .transaction-item__amount {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .transaction-item--income .transaction-item__amount {
@@ -356,8 +358,39 @@ select[aria-invalid="true"] {
   color: var(--color-text-muted);
 }
 
-.monthly-table td:last-child,
-.monthly-table th:last-child {
+.monthly-table td:nth-child(2),
+.monthly-table th:nth-child(2) {
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+.category-chart {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.chart-row__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.chart-row__value {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-row__track {
+  height: 10px;
+  background-color: var(--color-surface-raised);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.chart-row__bar {
+  height: 100%;
+  background-color: var(--color-accent);
+  border-radius: 999px;
 }

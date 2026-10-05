@@ -19,6 +19,9 @@ const totalIncomeElement = document.getElementById("total-income");
 const totalExpensesElement = document.getElementById("total-expenses");
 const balanceElement = document.getElementById("balance");
 
+const monthlySummaryBody = document.getElementById("monthly-summary-body");
+const categoryChart = document.getElementById("category-chart");
+
 const fields = {
   amount: {
     input: amountInput,
@@ -76,6 +79,12 @@ function getTodayDate() {
   return `${year}-${month}-${day}`;
 }
 
+function formatMonth(monthKey) {
+  const parts = monthKey.split("-");
+  const date = new Date(Number(parts[0]), Number(parts[1]) - 1, 1);
+  return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+}
+
 function loadTransactions() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -107,6 +116,21 @@ function calculateTotals() {
     totalExpenses,
     balance: totalIncome - totalExpenses,
   };
+}
+
+function groupExpenses(getKey) {
+  const totals = {};
+
+  transactions.forEach(function (transaction) {
+    if (transaction.type !== "expense") {
+      return;
+    }
+
+    const key = getKey(transaction);
+    totals[key] = (totals[key] || 0) + transaction.amount;
+  });
+
+  return totals;
 }
 
 function getFilteredTransactions() {
@@ -240,9 +264,87 @@ function renderSummary() {
   balanceElement.textContent = formatMoney(totals.balance);
 }
 
+function renderMonthlySummary() {
+  const totals = groupExpenses(function (transaction) {
+    return transaction.date.slice(0, 7);
+  });
+  const months = Object.keys(totals).sort().reverse();
+
+  monthlySummaryBody.innerHTML = "";
+
+  if (months.length === 0) {
+    const emptyRow = document.createElement("tr");
+    const emptyCell = createElement("td", "empty-message", "No expenses yet.");
+    emptyCell.colSpan = 2;
+    emptyRow.appendChild(emptyCell);
+    monthlySummaryBody.appendChild(emptyRow);
+    return;
+  }
+
+  months.forEach(function (month) {
+    const row = document.createElement("tr");
+    row.appendChild(createElement("td", "", formatMonth(month)));
+    row.appendChild(createElement("td", "", formatMoney(totals[month])));
+    monthlySummaryBody.appendChild(row);
+  });
+}
+
+function renderCategoryChart() {
+  const totals = groupExpenses(function (transaction) {
+    return transaction.category;
+  });
+  const categories = Object.keys(totals).sort(function (a, b) {
+    return totals[b] - totals[a];
+  });
+  const totalExpenses = calculateTotals().totalExpenses;
+
+  categoryChart.innerHTML = "";
+
+  if (categories.length === 0) {
+    categoryChart.appendChild(
+      createElement(
+        "p",
+        "empty-message",
+        "Your chart will appear here once you add expenses."
+      )
+    );
+    return;
+  }
+
+  categories.forEach(function (category) {
+    const percent = (totals[category] / totalExpenses) * 100;
+
+    const header = createElement("div", "chart-row__header");
+    header.appendChild(
+      createElement("span", "chart-row__label", capitalize(category))
+    );
+    header.appendChild(
+      createElement(
+        "span",
+        "chart-row__value",
+        `${formatMoney(totals[category])} (${Math.round(percent)}%)`
+      )
+    );
+
+    const bar = createElement("div", "chart-row__bar");
+    bar.style.width = `${percent}%`;
+
+    const track = createElement("div", "chart-row__track");
+    track.setAttribute("aria-hidden", "true");
+    track.appendChild(bar);
+
+    const row = createElement("div", "chart-row");
+    row.appendChild(header);
+    row.appendChild(track);
+    categoryChart.appendChild(row);
+  });
+}
+
 function render() {
   renderTransactions();
   renderSummary();
+  renderMonthlySummary();
+  renderCategoryChart();
 }
 
 function resetFilters() {
