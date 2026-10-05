@@ -46,7 +46,7 @@ const STORAGE_KEY = "expense-tracker-transactions";
 let transactions = [];
 let editingTransactionId = null;
 
-// "food" -> "Food"
+
 function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
