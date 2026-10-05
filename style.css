@@ -1,13 +1,13 @@
 :root {
   color-scheme: dark;
 
-  --color-bg: #12141a;
-  --color-surface: #1a1d26;
-  --color-surface-raised: #232734;
-  --color-border: #2e3342;
+  --color-bg: #0b0b0c;
+  --color-surface: #111112;
+  --color-surface-raised: #18181a;
+  --color-border: #29292c;
 
-  --color-text: #e8eaf0;
-  --color-text-muted: #9aa1b2;
+  --color-text: #f1f1f1;
+  --color-text-muted: #8f8f96;
 
   --color-accent: #7aa2f7;
   --color-income: #5fcf93;
@@ -21,7 +21,6 @@
 
   --font-main: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
-
 /* Reset and base styles */
 *,
 *::before,
