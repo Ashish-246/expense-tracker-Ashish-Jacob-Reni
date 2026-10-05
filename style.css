@@ -113,7 +113,7 @@ p {
 /* Summary cards */
 .summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
   gap: var(--space-2);
 }
 
@@ -161,7 +161,7 @@ p {
 /* Forms */
 .transaction-form {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
   gap: var(--space-2);
 }
 
@@ -393,4 +393,50 @@ select[aria-invalid="true"] {
   height: 100%;
   background-color: var(--color-accent);
   border-radius: 999px;
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-2);
+  }
+
+  .app-title {
+    font-size: 1.6rem;
+  }
+
+  .app-main {
+    gap: var(--space-2);
+  }
+
+  .card,
+  .summary-card {
+    padding: var(--space-2);
+  }
+
+  .form-actions .btn {
+    flex: 1;
+  }
+
+  .filters .btn {
+    width: 100%;
+  }
+
+  .transaction-item {
+    flex-wrap: wrap;
+  }
+
+  .transaction-item__details {
+    flex-basis: 100%;
+  }
+
+  .transaction-item__amount {
+    flex: 1;
+  }
+}
+
+@media (pointer: coarse) {
+  .btn--small {
+    padding: 0.6rem 1rem;
+  }
 }
