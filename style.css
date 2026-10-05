@@ -1,6 +1,4 @@
-
 :root {
-  
   color-scheme: dark;
 
   --color-bg: #12141a;
@@ -24,7 +22,7 @@
   --font-main: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/*  Reset and base styles */
+/* Reset and base styles */
 *,
 *::before,
 *::after {
@@ -60,7 +58,7 @@ p {
   border: 0;
 }
 
-/* Page layout*/
+/* Page layout */
 .app-header,
 .app-main,
 .app-footer {
@@ -98,7 +96,7 @@ p {
   font-size: 0.875rem;
 }
 
-/*  Cards */
+/* Cards */
 .card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -112,7 +110,7 @@ p {
   font-weight: 600;
 }
 
-/*  Summary cards */
+/* Summary cards */
 .summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -160,7 +158,7 @@ p {
   border-left-color: var(--color-accent);
 }
 
-/*   Forms  */
+/* Forms */
 .transaction-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -176,6 +174,11 @@ p {
 .form-group--wide,
 .form-actions {
   grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-1);
 }
 
 label {
@@ -218,7 +221,7 @@ button:focus-visible {
   display: none;
 }
 
-/*  Buttons  */
+/* Buttons */
 .btn {
   padding: 0.65rem 1.25rem;
   border: 1px solid transparent;
@@ -278,7 +281,7 @@ button:focus-visible {
   flex: 1 1 180px;
 }
 
-/*  Transaction list  */
+/* Transaction list */
 .transaction-list {
   list-style: none;
   margin: 0;
@@ -329,7 +332,7 @@ button:focus-visible {
   color: var(--color-text-muted);
 }
 
-/*  Monthly summary table */
+/* Monthly summary table */
 .monthly-table {
   width: 100%;
   border-collapse: collapse;

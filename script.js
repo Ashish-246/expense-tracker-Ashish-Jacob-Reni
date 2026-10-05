@@ -1,36 +1,38 @@
-
-//  Select the DOM elements we need
 const transactionForm = document.getElementById("transaction-form");
+const formHeading = document.getElementById("form-heading");
 const typeInput = document.getElementById("transaction-type");
 const amountInput = document.getElementById("transaction-amount");
 const categoryInput = document.getElementById("transaction-category");
 const dateInput = document.getElementById("transaction-date");
 const descriptionInput = document.getElementById("transaction-description");
- 
+const submitButton = document.getElementById("submit-button");
+const cancelEditButton = document.getElementById("cancel-edit-button");
+
 const transactionList = document.getElementById("transaction-list");
 const emptyMessage = document.getElementById("empty-message");
 
-//  Data
+const totalIncomeElement = document.getElementById("total-income");
+const totalExpensesElement = document.getElementById("total-expenses");
+const balanceElement = document.getElementById("balance");
 
-// Temporary sample data so we can practice rendering.
-// Each transaction is an object, and the list of them is an array.
-const transactions = [];
-
-// Helper functions
-
+let transactions = [];
+let editingTransactionId = null;
 
 // "food" -> "Food"
 function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-// Returns a signed amount: "+2500.00" or "-45.50"
-function formatAmount(transaction) {
-  const sign = transaction.type === "income" ? "+" : "-";
-  return sign + transaction.amount.toFixed(2);
+function formatMoney(amount) {
+  return amount.toFixed(2);
 }
 
-// Creates an element, gives it a class and some text, and returns it
+// Returns a signed amount: "+2500.00" or "-45.50"
+function formatSignedAmount(transaction) {
+  const sign = transaction.type === "income" ? "+" : "-";
+  return sign + formatMoney(transaction.amount);
+}
+
 function createElement(tag, className, text) {
   const element = document.createElement(tag);
   element.className = className;
@@ -49,11 +51,25 @@ function getTodayDate() {
   return `${year}-${month}-${day}`;
 }
 
+function calculateTotals() {
+  let totalIncome = 0;
+  let totalExpenses = 0;
 
-//  Rendering (turning data into HTML)
+  transactions.forEach(function (transaction) {
+    if (transaction.type === "income") {
+      totalIncome += transaction.amount;
+    } else {
+      totalExpenses += transaction.amount;
+    }
+  });
 
+  return {
+    totalIncome,
+    totalExpenses,
+    balance: totalIncome - totalExpenses,
+  };
+}
 
-// Builds ONE <li> for ONE transaction object
 function createTransactionElement(transaction) {
   const item = createElement(
     "li",
@@ -61,7 +77,6 @@ function createTransactionElement(transaction) {
   );
   item.dataset.id = transaction.id;
 
-  // Left side: description and meta line
   const details = createElement("div", "transaction-item__details");
   details.appendChild(
     createElement(
@@ -78,14 +93,12 @@ function createTransactionElement(transaction) {
     )
   );
 
-  // Middle: amount
   const amount = createElement(
     "p",
     "transaction-item__amount",
-    formatAmount(transaction)
+    formatSignedAmount(transaction)
   );
 
-  // Right side: buttons (they don't do anything yet)
   const actions = createElement("div", "transaction-item__actions");
 
   const editButton = createElement("button", "btn btn--small", "Edit");
@@ -103,7 +116,6 @@ function createTransactionElement(transaction) {
   actions.appendChild(editButton);
   actions.appendChild(deleteButton);
 
-  // Put the three parts inside the <li>
   item.appendChild(details);
   item.appendChild(amount);
   item.appendChild(actions);
@@ -111,11 +123,8 @@ function createTransactionElement(transaction) {
   return item;
 }
 
-// Clears the list and draws every transaction again
 function renderTransactions() {
   transactionList.innerHTML = "";
-
-  // Only show the empty message when there is nothing to show
   emptyMessage.hidden = transactions.length > 0;
 
   transactions.forEach(function (transaction) {
@@ -123,50 +132,135 @@ function renderTransactions() {
   });
 }
 
-// Clears the form and gets it ready for the next entry
+function renderSummary() {
+  const totals = calculateTotals();
+
+  totalIncomeElement.textContent = formatMoney(totals.totalIncome);
+  totalExpensesElement.textContent = formatMoney(totals.totalExpenses);
+  balanceElement.textContent = formatMoney(totals.balance);
+}
+
+function render() {
+  renderTransactions();
+  renderSummary();
+}
+
 function resetForm() {
   transactionForm.reset();
   dateInput.value = getTodayDate();
+
+  editingTransactionId = null;
+  formHeading.textContent = "Add transaction";
+  submitButton.textContent = "Add transaction";
+  cancelEditButton.hidden = true;
+
   amountInput.focus();
 }
- 
-// Runs when the user submits the form
+
+function startEditing(id) {
+  const transaction = transactions.find(function (item) {
+    return item.id === id;
+  });
+
+  if (!transaction) {
+    return;
+  }
+
+  editingTransactionId = id;
+
+  typeInput.value = transaction.type;
+  amountInput.value = transaction.amount;
+  categoryInput.value = transaction.category;
+  dateInput.value = transaction.date;
+  descriptionInput.value = transaction.description;
+
+  formHeading.textContent = "Edit transaction";
+  submitButton.textContent = "Save changes";
+  cancelEditButton.hidden = false;
+
+  formHeading.scrollIntoView({ behavior: "smooth" });
+  amountInput.focus({ preventScroll: true });
+}
+
 function handleFormSubmit(event) {
   // Stop the browser from reloading the page
   event.preventDefault();
- 
-  // Read the values from the form and build a transaction object
-  const newTransaction = {
-    id: Date.now(),
+
+  const isEditing = editingTransactionId !== null;
+
+  const formTransaction = {
+    id: isEditing ? editingTransactionId : Date.now(),
     type: typeInput.value,
     amount: Number(amountInput.value),
     category: categoryInput.value,
     date: dateInput.value,
     description: descriptionInput.value.trim(),
   };
- 
-  // Temporary safety check
+
   if (
-    newTransaction.amount <= 0 ||
-    !newTransaction.category ||
-    !newTransaction.date ||
-    !newTransaction.description
+    formTransaction.amount <= 0 ||
+    !formTransaction.category ||
+    !formTransaction.date ||
+    !formTransaction.description
   ) {
     return;
   }
- 
-  // Add to the START of the array so the newest appears first
-  transactions.unshift(newTransaction);
- 
-  renderTransactions();
+
+  if (isEditing) {
+    const index = transactions.findIndex(function (item) {
+      return item.id === editingTransactionId;
+    });
+    transactions[index] = formTransaction;
+  } else {
+    // Add to the START of the array so the newest appears first
+    transactions.unshift(formTransaction);
+  }
+
+  render();
   resetForm();
 }
 
-//  Start the app
+function deleteTransaction(id) {
+  const confirmed = confirm("Delete this transaction?");
+  if (!confirmed) {
+    return;
+  }
+
+  transactions = transactions.filter(function (transaction) {
+    return transaction.id !== id;
+  });
+
+  if (id === editingTransactionId) {
+    resetForm();
+  }
+
+  render();
+}
+
+function handleTransactionListClick(event) {
+  const button = event.target.closest("button");
+  if (!button) {
+    return;
+  }
+
+  const item = button.closest("li");
+  const id = Number(item.dataset.id);
+
+  if (button.dataset.action === "edit") {
+    startEditing(id);
+  } else if (button.dataset.action === "delete") {
+    deleteTransaction(id);
+  }
+}
 
 function init() {
   dateInput.value = getTodayDate();
-  renderTransactions();
+
+  transactionForm.addEventListener("submit", handleFormSubmit);
+  cancelEditButton.addEventListener("click", resetForm);
+  transactionList.addEventListener("click", handleTransactionListClick);
+
+  render();
 }
 
 init();
