@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+
+  
+  <!-- <link rel="stylesheet" href="css/style.css"> -->
+</head>
+<body>
+
+  <!--  Header  -->
+  <header class="app-header">
+    <h1 class="app-title">Expense Tracker</h1>
+    <p class="app-subtitle">Know where your money goes.</p>
+  </header>
+
+  <main class="app-main">
+
+    <!--  Summary cards -->
+    <section class="summary" aria-labelledby="summary-heading">
+      <h2 id="summary-heading" class="visually-hidden">Summary</h2>
+
+      <article class="summary-card summary-card--income">
+        <h3 class="summary-card__label">Total income</h3>
+        <p class="summary-card__amount" id="total-income">0.00</p>
+      </article>
+
+      <article class="summary-card summary-card--expense">
+        <h3 class="summary-card__label">Total expenses</h3>
+        <p class="summary-card__amount" id="total-expenses">0.00</p>
+      </article>
+
+      <article class="summary-card summary-card--balance">
+        <h3 class="summary-card__label">Balance</h3>
+        <p class="summary-card__amount" id="balance">0.00</p>
+      </article>
+    </section>
+
+    <!--  Add transaction form -->
+    <section class="card" aria-labelledby="form-heading">
+      <h2 id="form-heading" class="card__title">Add transaction</h2>
+
+      <form id="transaction-form" class="transaction-form">
+
+        <div class="form-group">
+          <label for="transaction-type">Type</label>
+          <select id="transaction-type" name="type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+          <small class="error-message" id="type-error"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="transaction-amount">Amount</label>
+          <input type="number" id="transaction-amount" name="amount"
+                 placeholder="0.00" min="0" step="0.01">
+          <small class="error-message" id="amount-error"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="transaction-category">Category</label>
+          <select id="transaction-category" name="category">
+            <option value="">Select a category</option>
+            <option value="salary">Salary</option>
+            <option value="food">Food</option>
+            <option value="transport">Transport</option>
+            <option value="housing">Housing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="health">Health</option>
+            <option value="shopping">Shopping</option>
+            <option value="other">Other</option>
+          </select>
+          <small class="error-message" id="category-error"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="transaction-date">Date</label>
+          <input type="date" id="transaction-date" name="date">
+          <small class="error-message" id="date-error"></small>
+        </div>
+
+        <div class="form-group form-group--wide">
+          <label for="transaction-description">Description</label>
+          <input type="text" id="transaction-description" name="description"
+                 placeholder="e.g. Groceries" maxlength="60">
+          <small class="error-message" id="description-error"></small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary" id="submit-button">Add transaction</button>
+        </div>
+
+      </form>
+    </section>
+
+    <!--  Transactions: filters + list  -->
+    <section class="card" aria-labelledby="transactions-heading">
+      <h2 id="transactions-heading" class="card__title">Transactions</h2>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="form-group">
+          <label for="filter-type">Show</label>
+          <select id="filter-type">
+            <option value="all">All types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expenses</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="filter-category">Category</label>
+          <select id="filter-category">
+            <option value="all">All categories</option>
+            <option value="salary">Salary</option>
+            <option value="food">Food</option>
+            <option value="transport">Transport</option>
+            <option value="housing">Housing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="health">Health</option>
+            <option value="shopping">Shopping</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn--secondary" id="reset-filters-button">Reset filters</button>
+      </div>
+
+      <!-- Empty state -->
+      <p class="empty-message" id="empty-message">No transactions yet. Add your first one above.</p>
+
+      <!-- Transaction list -->
+      <ul class="transaction-list" id="transaction-list">
+
+        <li class="transaction-item transaction-item--expense">
+          <div class="transaction-item__details">
+            <p class="transaction-item__description">Groceries</p>
+            <p class="transaction-item__meta">Food &bull; 2026-10-03</p>
+          </div>
+          <p class="transaction-item__amount">-45.50</p>
+          <div class="transaction-item__actions">
+            <button type="button" class="btn btn--small">Edit</button>
+            <button type="button" class="btn btn--small btn--danger">Delete</button>
+          </div>
+        </li>
+
+        <li class="transaction-item transaction-item--income">
+          <div class="transaction-item__details">
+            <p class="transaction-item__description">October salary</p>
+            <p class="transaction-item__meta">Salary &bull; 2026-10-01</p>
+          </div>
+          <p class="transaction-item__amount">+2500.00</p>
+          <div class="transaction-item__actions">
+            <button type="button" class="btn btn--small">Edit</button>
+            <button type="button" class="btn btn--small btn--danger">Delete</button>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!--  Monthly expense summary  -->
+    <section class="card" aria-labelledby="monthly-heading">
+      <h2 id="monthly-heading" class="card__title">Monthly expense summary</h2>
+
+      <table class="monthly-table">
+        <thead>
+          <tr>
+            <th scope="col">Month</th>
+            <th scope="col">Total expenses</th>
+          </tr>
+        </thead>
+        <!-- Sample row -->
+        <tbody id="monthly-summary-body">
+          <tr>
+            <td>October 2026</td>
+            <td>45.50</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== Category-wise expense chart ===== -->
+    <section class="card" aria-labelledby="chart-heading">
+      <h2 id="chart-heading" class="card__title">Spending by category</h2>
+
+      
+      <div class="category-chart" id="category-chart">
+        <p class="empty-message">Your chart will appear here once you add expenses.</p>
+      </div>
+    </section>
+
+  </main>
+
+
+  
+
+  <!-- <script src="js/script.js"></script> -->
+</body>
+</html>
