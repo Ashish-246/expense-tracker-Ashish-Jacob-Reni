@@ -56,7 +56,7 @@ function formatMoney(amount) {
   return rounded === 0 ? "0.00" : rounded.toFixed(2);
 }
 
-// Returns a signed amount: "+2500.00" or "-45.50"
+
 function formatSignedAmount(transaction) {
   const sign = transaction.type === "income" ? "+" : "-";
   return sign + formatMoney(transaction.amount);
@@ -71,7 +71,7 @@ function createElement(tag, className, text) {
   return element;
 }
 
-// Today's date as "YYYY-MM-DD" (the format a date input expects)
+
 function getTodayDate() {
   const today = new Date();
   const year = today.getFullYear();
@@ -398,7 +398,7 @@ function startEditing(id) {
 }
 
 function handleFormSubmit(event) {
-  // Stop the browser from reloading the page
+  
   event.preventDefault();
 
   const isEditing = editingTransactionId !== null;
@@ -427,7 +427,7 @@ function handleFormSubmit(event) {
     });
     transactions[index] = formTransaction;
   } else {
-    // Add to the START of the array so the newest appears first
+    
     transactions.unshift(formTransaction);
   }
 
