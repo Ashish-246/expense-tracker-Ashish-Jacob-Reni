@@ -1,0 +1,355 @@
+
+:root {
+  
+  color-scheme: dark;
+
+  --color-bg: #12141a;
+  --color-surface: #1a1d26;
+  --color-surface-raised: #232734;
+  --color-border: #2e3342;
+
+  --color-text: #e8eaf0;
+  --color-text-muted: #9aa1b2;
+
+  --color-accent: #7aa2f7;
+  --color-income: #5fcf93;
+  --color-expense: #f0716f;
+
+  --radius: 10px;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+
+  --font-main: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/*  Reset and base styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+/* Hides text visually but keeps it available to screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Page layout*/
+.app-header,
+.app-main,
+.app-footer {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+
+.app-header {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-3);
+}
+
+.app-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.app-subtitle {
+  margin-top: 0.25rem;
+  color: var(--color-text-muted);
+}
+
+.app-main {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.app-footer {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/*  Cards */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+
+.card__title {
+  margin-bottom: var(--space-2);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/*  Summary cards */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-2);
+}
+
+.summary-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
+
+.summary-card__label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.summary-card__amount {
+  margin-top: 0.25rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-card--income {
+  border-left-color: var(--color-income);
+}
+
+.summary-card--income .summary-card__amount {
+  color: var(--color-income);
+}
+
+.summary-card--expense {
+  border-left-color: var(--color-expense);
+}
+
+.summary-card--expense .summary-card__amount {
+  color: var(--color-expense);
+}
+
+.summary-card--balance {
+  border-left-color: var(--color-accent);
+}
+
+/*   Forms  */
+.transaction-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-2);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group--wide,
+.form-actions {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Visible focus ring for keyboard users */
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.error-message {
+  color: var(--color-expense);
+  font-size: 0.85rem;
+}
+
+/* Empty error messages take up no space */
+.error-message:empty {
+  display: none;
+}
+
+/*  Buttons  */
+.btn {
+  padding: 0.65rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn--primary {
+  background-color: var(--color-accent);
+  color: #0f1320;
+}
+
+.btn--primary:hover {
+  background-color: #94b4f9;
+}
+
+.btn--secondary {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn--secondary:hover {
+  background-color: var(--color-surface-raised);
+}
+
+.btn--small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn--small:hover {
+  background-color: var(--color-border);
+}
+
+.btn--danger {
+  color: var(--color-expense);
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.filters .form-group {
+  flex: 1 1 180px;
+}
+
+/*  Transaction list  */
+.transaction-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.transaction-item__details {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-item__description {
+  font-weight: 600;
+}
+
+.transaction-item__meta {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.transaction-item__amount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.transaction-item--income .transaction-item__amount {
+  color: var(--color-income);
+}
+
+.transaction-item--expense .transaction-item__amount {
+  color: var(--color-expense);
+}
+
+.transaction-item__actions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.empty-message {
+  color: var(--color-text-muted);
+}
+
+/*  Monthly summary table */
+.monthly-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.monthly-table th,
+.monthly-table td {
+  padding: 0.75rem 0;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.monthly-table th {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.monthly-table td:last-child,
+.monthly-table th:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
