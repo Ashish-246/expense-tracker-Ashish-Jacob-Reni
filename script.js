@@ -52,7 +52,8 @@ function capitalize(text) {
 }
 
 function formatMoney(amount) {
-  return amount.toFixed(2);
+  const rounded = Math.round(amount * 100) / 100;
+  return rounded === 0 ? "0.00" : rounded.toFixed(2);
 }
 
 // Returns a signed amount: "+2500.00" or "-45.50"
@@ -96,7 +97,11 @@ function loadTransactions() {
 }
 
 function saveTransactions() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+  } catch (error) {
+    console.error("Could not save transactions:", error);
+  }
 }
 
 function calculateTotals() {
